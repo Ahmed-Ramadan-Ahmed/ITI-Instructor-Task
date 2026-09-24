@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4f0">
+  <title>People Ops Copilot</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="People Ops Copilot home">
+        <span class="brand-mark" aria-hidden="true">P</span>
+        <span class="brand-copy"><strong>PEOPLE OPS</strong><small>SCREENING COPILOT</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="service-state"><i id="serviceDot"></i><span id="serviceText">Checking service</span></span>
+        <div id="sessionBadge" class="session-badge hidden"><span id="sessionName"></span><button id="logoutButton" class="text-button" type="button">Sign out</button></div>
+      </div>
+    </header>
+
+    <main>
+      <section id="loginScreen" class="login-layout">
+        <div class="welcome-panel">
+          <div class="eyebrow"><span class="eyebrow-line"></span> HUMAN-LED BY DESIGN</div>
+          <h1>Make every review<br><em>clear and grounded.</em></h1>
+          <p>Search trusted hiring guidance, prepare a structured screening draft, and keep a reviewer in control of every decision.</p>
+          <div class="welcome-note"><span class="note-icon">↳</span><span>Evidence first. People decide.</span></div>
+          <div class="welcome-orbit orbit-one"></div><div class="welcome-orbit orbit-two"></div>
+        </div>
+        <div class="login-wrap">
+          <div class="login-card">
+            <div class="card-kicker">SECURE WORKSPACE</div>
+            <h2>Welcome back</h2>
+            <p class="muted">Sign in with your assigned workspace role.</p>
+            <form id="loginForm">
+              <label for="username">Username</label>
+              <input id="username" name="username" autocomplete="username" required placeholder="Your username">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Your password">
+              <button class="button primary full" id="loginButton" type="submit">Sign in <span aria-hidden="true">→</span></button>
+            </form>
+            <p id="loginError" class="form-error" role="alert"></p>
+            <div class="login-foot"><span class="lock-icon">▣</span> Your session stays in this tab and is cleared when you sign out.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="workspace" class="workspace hidden">
+        <aside class="sidebar">
+          <div class="sidebar-label">WORKSPACE</div>
+          <nav id="navigation" class="navigation" aria-label="Workspace sections"></nav>
+          <div class="sidebar-bottom">
+            <div class="human-card"><span class="human-icon">◎</span><div><strong>Human review stays in control</strong><small>AI drafts. A reviewer decides.</small></div></div>
+            <div class="model-label"><span class="model-dot"></span> GEMINI 3.5 FLASH-LITE</div>
+          </div>
+        </aside>
+
+        <div class="content-area">
+          <section id="askView" class="view hidden">
+            <div class="page-heading"><div><div class="eyebrow">KNOWLEDGE BASE</div><h2>Ask the handbook</h2><p>Answers are grounded in your hiring policies, role guides, and scoring rubrics.</p></div><span class="heading-stamp">01 <b>/</b> 03</span></div>
+            <div class="ask-layout">
+              <div class="panel ask-panel">
+                <form id="askForm">
+                  <label for="question">What would you like to know?</label>
+                  <textarea id="question" rows="4" maxlength="10000" required placeholder="e.g. What evidence should a software engineering reviewer score?"></textarea>
+                  <div class="input-footer"><span>Answers cite the exact source sections used.</span><button class="button primary" id="askButton" type="submit">Ask Copilot <span aria-hidden="true">→</span></button></div>
+                </form>
+              </div>
+              <div class="panel side-note"><div class="note-symbol">✳</div><h3>Grounded guidance</h3><p>The copilot searches policy and rubric documents together. If the corpus does not contain enough evidence, it should say so.</p><div class="note-rule"></div><small>Every answer includes source citations for review.</small></div>
+            </div>
+            <div id="answerPanel" class="panel result-panel hidden" aria-live="polite">
+              <div class="result-top"><div><span class="result-label">COPILOT RESPONSE</span><span id="answerStatus" class="status-pill"></span></div><button id="answerTraceButton" class="text-button hidden" type="button">View run trace ↗</button></div>
+              <p id="answerText" class="answer-text"></p>
+              <div id="citationList" class="citation-list"></div>
+              <div id="askRunId" class="run-id"></div>
+            </div>
+          </section>
+
+          <section id="screeningView" class="view hidden">
+            <div class="page-heading"><div><div class="eyebrow">RECRUITER WORKSPACE</div><h2>Prepare a screening draft</h2><p>Use job-related evidence only. The match score is an assistive indicator; all candidates, including those below the 70% triage threshold, go to a human reviewer.</p></div><span class="heading-stamp">02 <b>/</b> 03</span></div>
+            <div class="panel form-panel">
+              <form id="screeningForm">
+                <div class="field-grid">
+                  <div><label for="candidateName">Candidate name</label><input id="candidateName" required maxlength="200" placeholder="Synthetic candidate name"></div>
+                  <div><label for="roleApplied">Role applied for</label><select id="roleApplied" required><option value="">Select a role</option><option>Software Engineer</option><option>People Analyst</option><option>HR Coordinator</option></select></div>
+                </div>
+                <label for="profileSource">Candidate profile source</label>
+                <select id="profileSource"><option value="json">Enter profile as JSON</option><option value="document">Upload PDF or Word document</option></select>
+                <div id="profileJsonPanel">
+                <label for="profileJson">Candidate profile (JSON)</label>
+                <textarea id="profileJson" class="code-input" rows="7" required spellcheck="false">{
+  "workSample": "Built a Java REST service and added automated tests",
+  "experience": "Two years maintaining backend services"
+}</textarea>
+                </div>
+                <div id="profileDocumentPanel" class="hidden">
+                  <label for="profileFile">Resume or candidate profile (PDF, MD, DOC, DOCX; max 10 MB)</label>
+                  <input id="profileFile" type="file" accept=".pdf,.md,.doc,.docx,text/markdown,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                  <p class="muted">Text is extracted in this app for your review before screening. Image-only scanned PDFs need OCR and cannot be read yet. Education and experience are display-only; unclear experience is labeled as a freshman assumption.</p>
+                  <label for="extractedPreview">Extracted text preview</label>
+                  <textarea id="extractedPreview" rows="7" readonly placeholder="Choose a document to extract its text."></textarea>
+                  <p id="extractStatus" class="muted" role="status"></p>
+                </div>
+                <div class="input-footer"><span>Keep the profile limited to relevant, job-related evidence.</span><button class="button primary" id="screeningButton" type="submit">Create review draft <span aria-hidden="true">→</span></button></div>
+              </form>
+            </div>
+            <div id="screeningNotice" class="notice hidden" role="status"></div>
+          </section>
+
+          <section id="reviewsView" class="view hidden">
+            <div class="page-heading"><div><div class="eyebrow">REVIEWER WORKSPACE</div><h2>Human review queue</h2><p>Check the evidence and flags before approving, editing, or rejecting a draft.</p></div><button id="refreshReviews" class="button secondary" type="button">Refresh queue ↻</button></div>
+            <div id="reviewsList" class="review-list"></div>
+            <div id="reviewsEmpty" class="empty-state hidden"><span>✓</span><h3>Queue is clear</h3><p>New screening drafts will appear here when ready for review.</p></div>
+          </section>
+
+          <section id="traceView" class="view hidden">
+            <div class="page-heading"><div><div class="eyebrow">OBSERVABILITY</div><h2>Run trace</h2><p>Inspect the persisted agent steps, citations, review action, and token usage.</p></div><span class="heading-stamp">03 <b>/</b> 03</span></div>
+            <div class="panel trace-search"><label for="traceRunId">Run ID</label><div class="trace-input-row"><input id="traceRunId" placeholder="Paste a run UUID" autocomplete="off"><button id="loadTrace" class="button primary" type="button">Load trace</button></div></div>
+            <div id="traceResult" class="trace-result hidden"></div>
+          </section>
+          <div id="toast" class="toast hidden" role="status"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><span>HR SCREENING COPILOT</span><span>Assistive drafts only · Human decisions always</span></footer>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
